@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('servis karşılama mesajını dönmelidir', () => {
-      expect(appController.getHello()).toBe('Rezarvasyon Apı çalışıyor');
+    it('should return "Hello World!"', () => {
+      expect(appController.getHello()).toBe('Hello World!');
     });
   });
 });

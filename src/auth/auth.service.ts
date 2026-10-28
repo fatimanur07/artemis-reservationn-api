@@ -1,14 +1,7 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  ForbiddenException,
-  ConflictException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Role } from '@prisma/client';
-import { RegisterDto, LoginDto } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,84 +10,50 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(dto: RegisterDto) {
-    const existing = await this.prisma.user.findUnique({
-      where: { email: dto.email },
+  async register(data: { email: string; password: string; name?: string }) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: data.email },
     });
-    if (existing) {
-      throw new ConflictException('Bu e-posta adresi zaten kullanımda.');
+
+    if (existingUser) {
+      throw new BadRequestException('Bu e-posta adresi zaten kullanımda.');
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
     const user = await this.prisma.user.create({
       data: {
-        email: dto.email,
+        email: data.email,
         password: hashedPassword,
-        name: dto.name,
-        role: dto.role || Role.USER,
+        name: data.name,
       },
     });
 
-    const tokens = await this.getTokens(user.id, user.email, user.role);
-    await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
-    return { user: { id: user.id, email: user.email, name: user.name, role: user.role }, ...tokens };
+    return this.generateToken(user.id, user.email);
   }
 
-  async login(dto: LoginDto) {
+  async login(data: { email: string; password: string }) {
     const user = await this.prisma.user.findUnique({
-      where: { email: dto.email },
+      where: { email: data.email },
     });
+
     if (!user) {
       throw new UnauthorizedException('Geçersiz e-posta veya şifre.');
     }
 
-    const isMatch = await bcrypt.compare(dto.password, user.password);
-    if (!isMatch) {
+    const isPasswordValid = await bcrypt.compare(data.password, user.password);
+
+    if (!isPasswordValid) {
       throw new UnauthorizedException('Geçersiz e-posta veya şifre.');
     }
 
-    const tokens = await this.getTokens(user.id, user.email, user.role);
-    await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
-    return { user: { id: user.id, email: user.email, name: user.name, role: user.role }, ...tokens };
+    return this.generateToken(user.id, user.email);
   }
 
-  async getTokens(userId: string, email: string, role: Role) {
-    const payload = { sub: userId, email, role };
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_ACCESS_SECRET || 'artemis_access_super_secret_key_2026',
-        expiresIn: '15m',
-      }),
-      this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_REFRESH_SECRET || 'artemis_refresh_super_secret_key_2026',
-        expiresIn: '7d',
-      }),
-    ]);
-
-    return { accessToken, refreshToken };
-  }
-
-  async updateRefreshTokenHash(userId: string, refreshToken: string) {
-    const hash = await bcrypt.hash(refreshToken, 10);
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { refreshTokenHash: hash },
-    });
-  }
-
-  async refreshTokens(userId: string, rt: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user || !user.refreshTokenHash) {
-      throw new ForbiddenException('Erişim reddedildi.');
-    }
-
-    const isMatch = await bcrypt.compare(rt, user.refreshTokenHash);
-    if (!isMatch) {
-      throw new ForbiddenException('Geçersiz refresh token.');
-    }
-
-    const tokens = await this.getTokens(user.id, user.email, user.role);
-    await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
-    return tokens;
+  private generateToken(userId: number, email: string) {
+    const payload = { sub: userId, email };
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
   }
 }

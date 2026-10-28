@@ -1,28 +1,22 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
+import { ApiTags, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto, LoginDto } from './auth.dto';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   @Post('register')
-  register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto);
+  @ApiBody({ type: RegisterDto })
+  register(@Body() body: RegisterDto) {
+    return this.authService.register(body);
   }
 
-  @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto);
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @Post('refresh')
-  refreshTokens(
-    @Body('userId') userId: string,
-    @Body('refreshToken') refreshToken: string,
-  ) {
-    return this.authService.refreshTokens(userId, refreshToken);
+  @ApiBody({ type: LoginDto })
+  login(@Body() body: LoginDto) {
+    return this.authService.login(body);
   }
 }

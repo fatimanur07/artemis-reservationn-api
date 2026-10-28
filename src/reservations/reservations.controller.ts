@@ -1,49 +1,43 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { ReservationsService } from './reservations.service';
-import { CreateReservationDto, UpdateReservationDto } from './reservation.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CreateReservationDto } from './reservation.dto';
 
+@ApiTags('Reservations')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('reservations')
 export class ReservationsController {
   constructor(private readonly reservationsService: ReservationsService) {}
 
   @Post()
-  create(@Req() req: any, @Body() dto: CreateReservationDto) {
-    return this.reservationsService.create(req.user.id, dto);
+  @ApiBody({ type: CreateReservationDto })
+  create(@Request() req: any, @Body() body: CreateReservationDto) {
+    return this.reservationsService.create(req.user.id, body);
   }
 
   @Get()
-  findAll(@Req() req: any) {
-    return this.reservationsService.findAll(req.user.id, req.user.role);
+  findAll(@Request() req: any) {
+    return this.reservationsService.findAll(req.user.id);
   }
 
   @Get(':id')
-  findOne(@Req() req: any, @Param('id') id: string) {
-    return this.reservationsService.findOne(id, req.user.id, req.user.role);
+  findOne(@Request() req: any, @Param('id') id: string) {
+    return this.reservationsService.findOne(req.user.id, +id);
   }
 
   @Patch(':id')
   update(
-    @Req() req: any,
+    @Request() req: any,
     @Param('id') id: string,
-    @Body() dto: UpdateReservationDto,
+    @Body() body: Partial<CreateReservationDto>,
   ) {
-    return this.reservationsService.update(id, req.user.id, req.user.role, dto);
+    return this.reservationsService.update(req.user.id, +id, body);
   }
 
   @Delete(':id')
-  remove(@Req() req: any, @Param('id') id: string) {
-    return this.reservationsService.remove(id, req.user.id, req.user.role);
+  remove(@Request() req: any, @Param('id') id: string) {
+    return this.reservationsService.remove(req.user.id, +id);
   }
 }
