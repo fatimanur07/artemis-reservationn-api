@@ -1,0 +1,45 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id               String        @id @default(uuid())
+  email            String        @unique
+  password         String
+  name             String?
+  role             Role          @default(USER)
+  refreshTokenHash String?       // Refresh Token isterini karşılar
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  reservations     Reservation[]
+}
+
+model Reservation {
+  id          String        @id @default(uuid())
+  title       String
+  startDate   DateTime
+  endDate     DateTime
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  services    Service[]     // Çoka-çok (Many-to-Many) ilişki
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Service {
+  id           String        @id @default(uuid())
+  name         String        @unique // Örn: 'SPA Paketi', 'Havalimanı VIP Transfer', 'Özel Akşam Yemeği'
+  price        Float
+  reservations Reservation[] // Çoka-çok (Many-to-Many) ilişki
+}
