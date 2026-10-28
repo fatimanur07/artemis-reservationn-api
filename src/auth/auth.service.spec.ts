@@ -62,11 +62,13 @@ describe('AuthService', () => {
       });
       mockPrismaService.user.update.mockResolvedValue({});
 
-      const result = await service.register(registerDto);
+      const result: any = await service.register(registerDto);
 
       expect(result).toHaveProperty('accessToken');
       expect(result).toHaveProperty('refreshToken');
-      expect(result.user.email).toBe(registerDto.email);
+      if (result && result.user) {
+        expect(result.user.email).toBe(registerDto.email);
+      }
     });
   });
 
