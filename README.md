@@ -1,4 +1,3 @@
-# 🏨 Artemis Luxury Resort - 
 # 🏛️ Artemis Reservation API
 
 Modern, ölçeklenebilir ve rol tabanlı erişim kontrolü (RBAC) sunan kurumsal seviyede bir rezervasyon ve randevu yönetim REST API'si.
@@ -44,3 +43,76 @@ Proje, SQLite altyapısından kurumsal bulut veritabanı **Supabase PostgreSQL**
   ├── password           ├── startDate             └── price
   ├── role (USER/ADMIN)  ├── endDate
   └── refreshTokenHash   └── userId (FK)
+```
+
+---
+
+## ⚙️ Kurulum ve Çalıştırma
+
+### 1. Depoyu Klonlayın
+```bash
+git clone [https://github.com/fatimanur07/artemis-reservationn-api.git](https://github.com/fatimanur07/artemis-reservationn-api.git)
+cd artemis-reservationn-api
+```
+
+### 2. Bağımlılıkları Yükleyin
+```bash
+npm install
+```
+
+### 3. Ortam Değişkenlerini Tanımlayın
+Kök dizinde bir `.env` dosyası oluşturun ve gerekli değerleri girin:
+```env
+DATABASE_URL="postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION][.pooler.supabase.com:6543/postgres?pgbouncer=true](https://.pooler.supabase.com:6543/postgres?pgbouncer=true)"
+DIRECT_URL="postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION][.pooler.supabase.com:6543/postgres](https://.pooler.supabase.com:6543/postgres)"
+
+JWT_SECRET="your_jwt_secret_key"
+JWT_REFRESH_SECRET="your_jwt_refresh_secret_key"
+PORT=3000
+```
+
+### 4. Prisma İstemcisini ve Şemayı Senkronize Edin
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+### 5. Uygulamayı Başlatın
+```bash
+# Geliştirme modu
+npm run start:dev
+
+# Prodüksiyon derlemesi
+npm run build
+npm run start:prod
+```
+
+---
+
+## 📖 API Dokümantasyonu (Swagger)
+
+Uygulama çalıştıktan sonra tarayıcınızdan interaktif API dokümantasyonuna erişebilirsiniz:
+
+👉 **`http://localhost:3000/api`**
+
+### Başlıca Uç Noktalar
+
+| Metot | Uç Nokta | Açıklama | Yetki |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/auth/register` | Yeni kullanıcı kaydı | Herkese Açık |
+| `POST` | `/auth/login` | Giriş yapma (Access & Refresh token döner) | Herkese Açık |
+| `POST` | `/auth/refresh` | Access token yenileme | Refresh Token |
+| `GET` | `/reservations` | Kullanıcının rezervasyonlarını listeleme | JWT Auth |
+| `POST` | `/reservations` | Yeni randevu / rezervasyon oluşturma | JWT Auth |
+| `GET` | `/reservations/:id`| Belirli bir rezervasyonun detayını getirme | JWT Auth |
+| `PATCH`| `/reservations/:id`| Rezervasyon bilgilerini güncelleme | JWT Auth |
+| `DELETE`| `/reservations/:id`| Rezervasyonu iptal etme / silme | JWT Auth |
+
+---
+
+## 🧪 Testler
+
+```bash
+# Birim testleri çalıştırma
+npm run test
+```
