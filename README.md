@@ -1,66 +1,46 @@
-# 🏨 Artemis Luxury Resort - Reservation API
+# 🏨 Artemis Luxury Resort - 
+# 🏛️ Artemis Reservation API
 
-Artemis Luxury Resort otel yönetim ve rezervasyon sistemi için geliştirilmiş, yüksek performanslı ve modüler RESTful backend servisidir. Güvenli kimlik doğrulama, rezervasyon yönetimi ve ilişkisel veri tabanı modellemesini içerir.
+Modern, ölçeklenebilir ve rol tabanlı erişim kontrolü (RBAC) sunan kurumsal seviyede bir rezervasyon ve randevu yönetim REST API'si.
 
----
-
-## 🚀 Teknolojiler ve Araçlar
-
-- **Backend Framework:** NestJS (Node.js & TypeScript)
-- **Veritabanı & ORM:** Prisma ORM & SQLite
-- **Kimlik Doğrulama:** JWT (JSON Web Token), Passport & Bcrypt
-- **API Dokümantasyonu:** Swagger / OpenAPI
-- **Doğrulama & Güvenlik:** Class-Validator, Class-Transformer
+Proje, SQLite altyapısından kurumsal bulut veritabanı **Supabase PostgreSQL** mimarisine taşınmış; çift tokenlı (Access & Refresh Token) JWT kimlik doğrulama, çoka-çok ilişkisel veri modelleri ve Swagger dokümantasyonu ile güçlendirilmiştir.
 
 ---
 
-## ✨ Temel Özellikler
+## 🚀 Öne Çıkan Özellikler
 
-- **Kullanıcı & Oturum Yönetimi (Auth):**
-  - Güvenli kullanıcı kaydı (Register) ve şifreli veri saklama.
-  - JWT tabanlı oturum açma (Login) ve Bearer Token yetkilendirmesi.
-  - Role/kullanıcı bazlı korumalı endpoint'ler (JwtAuthGuard).
-
-- **Rezervasyon Yönetimi (Reservations):**
-  - Müsaitlik durumuna göre oda rezervasyonu oluşturma.
-  - Rezervasyon detaylarını listeleme, sorgulama ve filtreleme.
-  - Rezervasyon güncelleme ve iptal/silme süreçleri.
-
-- **Veritabanı & Migration:**
-  - Prisma şeması (schema.prisma) ile tip güvenli (type-safe) veritabanı ilişkileri.
-  - Sürüm kontrollü migration mimarisi.
+- **Gelişmiş Kimlik Doğrulama (Auth & Security):** 
+  - JWT tabanlı Access Token ve veritabanında güvenle hash'lenen (bcrypt) Refresh Token mekanizması.
+  - Oturum süresi dolduğunda kesintisiz oturum yenileme (`/auth/refresh`).
+- **Rol Tabanlı Erişim Kontrolü (RBAC):** `USER` ve `ADMIN` rolleri ile korunan uç noktalar.
+- **İlişkisel Veritabanı Mimarisi:**
+  - `User`, `Reservation` ve `Service` modelleri.
+  - Randevu ve hizmetler arasında dinamik **Çoka-Çok (Many-to-Many)** ilişki yapısı.
+  - Otomatik üretilen `UUID` benzersiz kimlikleri.
+- **Veritabanı Yönetimi & Migration:** Prisma ORM ve Supabase PostgreSQL (Transaction & Session Pooler) entegrasyonu.
+- **Etkileşimli API Dokümantasyonu:** OpenAPI / Swagger UI desteği.
+- **Güvenli Konfigürasyon:** Hassas bağlantı dizeleri ve gizli anahtarların `.env` üzerinden yönetimi.
 
 ---
 
-## 🛠️ Kurulum ve Çalıştırma
+## 🛠️ Teknoloji Yığını
 
-Projeyi yerel ortamınızda ayağa kaldırmak için aşağıdaki adımları izleyin:
-
-### 1. Bağımlılıkları Yükleyin
-npm install
-
-### 2. Ortam Değişkenlerini Ayarlayın
-.env.example dosyasını referans alarak ana dizinde bir .env dosyası oluşturun:
-DATABASE_URL="file:./dev.db"
-JWT_SECRET="super-secret-jwt-key"
-PORT=3000
-
-### 3. Veritabanını Hazırlayın (Prisma Migration)
-npx prisma migrate dev
-
-### 4. Uygulamayı Başlatın
-npm run start:dev
+- **Backend Framework:** NestJS (Node.js)
+- **Dil:** TypeScript
+- **ORM:** Prisma ORM
+- **Veritabanı:** Supabase (Cloud PostgreSQL)
+- **Kimlik Doğrulama:** Passport.js, JWT (`@nestjs/jwt`), Bcrypt
+- **Dokümantasyon:** Swagger UI (`@nestjs/swagger`)
+- **Test:** Jest
 
 ---
 
-## 📚 API Dokümantasyonu (Swagger)
+## 📂 Veritabanı Şeması (ERD)
 
-Uygulama çalıştıktan sonra interaktif Swagger arayüzü üzerinden tüm endpoint'leri test edebilirsiniz:
-http://localhost:3000/api
-
----
-
-## 🧪 Testler
-
-npm run test
-npm run test:e2e
+```text
+[ User ] 1 ──── ∞ [ Reservation ] ∞ ──── ∞ [ Service ]
+  ├── id (UUID)          ├── id (UUID)             ├── id (UUID)
+  ├── email              ├── title                 ├── name
+  ├── password           ├── startDate             └── price
+  ├── role (USER/ADMIN)  ├── endDate
+  └── refreshTokenHash   └── userId (FK)
