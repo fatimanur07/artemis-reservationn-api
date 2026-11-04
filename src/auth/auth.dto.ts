@@ -1,28 +1,27 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { Role } from '@prisma/client';
 
 export class RegisterDto {
-  @ApiProperty({ example: 'test@example.com' })
-  @IsEmail()
+  @IsEmail({}, { message: 'Geçerli bir e-posta giriniz' })
   email: string;
 
-  @ApiProperty({ example: 'Password123!' })
   @IsString()
-  @MinLength(6)
+  @MinLength(6, { message: 'Şifre en az 6 karakter olmalıdır' })
   password: string;
 
-  @ApiProperty({ example: 'Test Kullanıcı', required: false })
-  @IsOptional()
   @IsString()
-  name?: string;
+  @IsNotEmpty({ message: 'İsim alanı boş bırakılamaz' })
+  name: string;
+
+  @IsOptional()
+  role?: Role;
 }
 
 export class LoginDto {
-  @ApiProperty({ example: 'test@example.com' })
-  @IsEmail()
+  @IsEmail({}, { message: 'Geçerli bir e-posta giriniz' })
   email: string;
 
-  @ApiProperty({ example: 'Password123!' })
   @IsString()
+  @IsNotEmpty({ message: 'Şifre boş bırakılamaz' })
   password: string;
 }

@@ -1,64 +1,75 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateReservationDto, UpdateReservationDto } from './reservation.dto';
 
 @Injectable()
 export class ReservationsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(userId: number, data: { title: string; startDate: string; endDate: string }) {
+  async create(userId: string, dto: CreateReservationDto) {
+    const { title, startDate, endDate, serviceIds = [] } = dto;
+
     return this.prisma.reservation.create({
       data: {
-        title: data.title,
-        startDate: new Date(data.startDate),
-        endDate: new Date(data.endDate),
-        userId: userId,
+        title,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        userId,
+        services: serviceIds.length
+          ? {
+              connect: serviceIds.map((id: string) => ({ id })),
+            }
+          : undefined,
+      },
+      include: {
+        services: true,
       },
     });
   }
 
-  
-  async findAll(userId: number) {
+  async findAll(userId: string) {
     return this.prisma.reservation.findMany({
       where: { userId },
-      orderBy: { startDate: 'asc' },
+      include: { services: true },
     });
   }
 
-  
-  async findOne(userId: number, id: number) {
+  async findOne(id: string) {
     const reservation = await this.prisma.reservation.findUnique({
       where: { id },
+      include: { services: true },
     });
 
     if (!reservation) {
-      throw new NotFoundException('Rezervasyon bulunamadı.');
-    }
-
-    if (reservation.userId !== userId) {
-      throw new ForbiddenException('Bu rezervasyona erişim yetkiniz yok.');
+      throw new NotFoundException('Rezervasyon bulunamadı');
     }
 
     return reservation;
   }
 
-  // 4. Rezervasyon güncelle
-  async update(userId: number, id: number, data: { title?: string; startDate?: string; endDate?: string }) {
-    await this.findOne(userId, id); 
+  async update(id: string, dto: UpdateReservationDto) {
+    await this.findOne(id);
+
+    const { serviceIds, startDate, endDate, ...rest } = dto;
 
     return this.prisma.reservation.update({
       where: { id },
       data: {
-        ...(data.title && { title: data.title }),
-        ...(data.startDate && { startDate: new Date(data.startDate) }),
-        ...(data.endDate && { endDate: new Date(data.endDate) }),
+        ...rest,
+        ...(startDate && { startDate: new Date(startDate) }),
+        ...(endDate && { endDate: new Date(endDate) }),
+        ...(serviceIds && {
+          services: {
+            set: serviceIds.map((srvId: string) => ({ id: srvId })),
+          },
+        }),
       },
+      include: { services: true },
     });
   }
 
-  // 5. Rezervasyon sil
-  async remove(userId: number, id: number) {
-    await this.findOne(userId, id); 
-
+  async remove(id: string) {
+    await this.findOne(id);
     return this.prisma.reservation.delete({
       where: { id },
     });
