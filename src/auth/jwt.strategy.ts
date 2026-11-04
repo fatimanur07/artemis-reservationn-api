@@ -4,24 +4,24 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(private prisma: PrismaService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET || 'super-secret-key-123',
+      secretOrKey: process.env.JWT_ACCESS_SECRET || 'default_secret',
     });
   }
 
-  async validate(payload: { sub: number; email: string }) {
+  async validate(payload: { sub: string; email: string; role: string }) {
     const user = await this.prisma.user.findUnique({
-      where: { id: payload.sub },
+      where: { id: String(payload.sub) },
     });
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Kullanıcı bulunamadı');
     }
 
-    return { id: user.id, email: user.email, name: user.name };
+    return user;
   }
 }

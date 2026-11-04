@@ -1,19 +1,46 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsISO8601 } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsArray, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateReservationDto {
-  @ApiProperty({ example: 'Toplantı Salonu A' })
-  @IsNotEmpty()
+  @ApiProperty({ example: 'Özel Rezervasyon' })
   @IsString()
+  @IsNotEmpty()
   title: string;
 
-  @ApiProperty({ example: '2026-10-15T10:00:00.000Z' })
+  @ApiProperty({ example: '2026-11-01T10:00:00Z' })
+  @IsDateString()
   @IsNotEmpty()
-  @IsISO8601()
   startDate: string;
 
-  @ApiProperty({ example: '2026-10-15T11:00:00.000Z' })
+  @ApiProperty({ example: '2026-11-01T12:00:00Z' })
+  @IsDateString()
   @IsNotEmpty()
-  @IsISO8601()
   endDate: string;
+
+  @ApiPropertyOptional({ example: ['service-uuid-1'], type: [String] })
+  @IsArray()
+  @IsOptional()
+  serviceIds?: string[];
+}
+
+export class UpdateReservationDto {
+  @ApiPropertyOptional({ example: 'Güncellenen Rezervasyon' })
+  @IsString()
+  @IsOptional()
+  title?: string;
+
+  @ApiPropertyOptional({ example: '2026-11-02T10:00:00Z' })
+  @IsDateString()
+  @IsOptional()
+  startDate?: string;
+
+  @ApiPropertyOptional({ example: '2026-11-02T12:00:00Z' })
+  @IsDateString()
+  @IsOptional()
+  endDate?: string;
+
+  @ApiPropertyOptional({ example: ['service-uuid-1'], type: [String] })
+  @IsArray()
+  @IsOptional()
+  serviceIds?: string[];
 }
