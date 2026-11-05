@@ -22,7 +22,7 @@
 </head>
 <body class="hospital-bg text-slate-800 min-h-screen flex flex-col antialiased">
 
-  <!-- Üst Menü / Header -->
+  
   <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/90 sticky top-0 z-50 shadow-sm">
     <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
       
@@ -37,7 +37,7 @@
         </div>
       </div>
 
-      <!-- Navigasyon Sekmeleri (Giriş yapılınca görünür) -->
+      
       <nav id="mainNav" class="hidden md:flex items-center space-x-1 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200">
         <button onclick="navigateTo('doctors')" id="nav-doctors" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition text-white bg-blue-600 shadow-sm">
           <i class="fa-solid fa-user-doctor mr-1.5"></i> Hekim Kadromuz
@@ -50,7 +50,7 @@
         </button>
       </nav>
 
-      <!-- Kullanıcı & Çıkış Durumu -->
+      
       <div id="authStatus" class="flex items-center space-x-3">
         <span id="userBadge" class="hidden text-xs font-semibold bg-blue-50 text-blue-700 px-3.5 py-2 rounded-full border border-blue-200"></span>
         <button id="logoutBtn" onclick="logout()" class="hidden text-xs font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-4 py-2 rounded-xl transition">
@@ -63,14 +63,14 @@
     </div>
   </header>
 
-  <!-- Bildirim Kutusu -->
+  
   <div class="max-w-xl mx-auto px-6 mt-4 w-full">
     <div id="globalAlert" class="hidden p-3.5 rounded-xl text-sm font-medium text-center shadow-sm"></div>
   </div>
 
   <main class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full">
 
-    <!-- 1. SEKME: TÜM DOKTORLAR (Açılış Ekranı) -->
+    
     <section id="page-doctors" class="space-y-8">
       <div class="text-center max-w-2xl mx-auto">
         <span class="text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-100/70 px-3.5 py-1.5 rounded-full border border-blue-200">Akademik & Klinik Kadro</span>
@@ -80,7 +80,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         
-        <!-- Kardiyoloji 1: Doç. Dr. Fatımanur Cengiz -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-blue-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between relative overflow-hidden group">
           <div class="absolute top-0 left-0 w-full h-1.5 bg-blue-600"></div>
           <div>
@@ -103,11 +103,11 @@
           </button>
         </div>
 
-        <!-- Kardiyoloji 2: Uzm. Dr. Caner Erkin -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-4">
-              <img src="https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Uzm. Dr. Caner Erkin" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <img src="https://images.pexels.com/photos/8460159/pexels-photo-8460159.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Uzm. Dr. Caner Erkin" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
               <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Uzman Kardiyolog</span>
             </div>
             <h3 class="text-lg font-bold text-slate-900">Uzm. Dr. Caner Erkin</h3>
@@ -125,7 +125,7 @@
           </button>
         </div>
 
-        <!-- Dahiliye 1: Uzm. Dr. Polat Yılmaz -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-4">
@@ -147,11 +147,11 @@
           </button>
         </div>
 
-        <!-- Dahiliye 2: Uzm. Dr. Selin Korkmaz -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-4">
-              <img src="https://images.pexels.com/photos/4173239/pexels-photo-4173239.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Uzm. Dr. Selin Korkmaz" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <img src="https://images.pexels.com/photos/5327580/pexels-photo-5327580.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Uzm. Dr. Selin Korkmaz" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
               <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Uzman Hekim</span>
             </div>
             <h3 class="text-lg font-bold text-slate-900">Uzm. Dr. Selin Korkmaz</h3>
@@ -169,7 +169,7 @@
           </button>
         </div>
 
-        <!-- Dermatoloji 1: Uzm. Dr. Emre Demir -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-4">
@@ -191,7 +191,7 @@
           </button>
         </div>
 
-        <!-- Dermatoloji 2: Uzm. Dr. Leyla Taş -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-4">
@@ -213,7 +213,7 @@
           </button>
         </div>
 
-        <!-- Göz 1: Op. Dr. Zeynep Çelik -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-4">
@@ -235,11 +235,11 @@
           </button>
         </div>
 
-        <!-- Göz 2: Op. Dr. Kerem Vural -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-4">
-              <img src="https://images.pexels.com/photos/8376277/pexels-photo-8376277.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Op. Dr. Kerem Vural" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <img src="https://images.pexels.com/photos/4173239/pexels-photo-4173239.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Op. Dr. Kerem Vural" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
               <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Retina & Glokom</span>
             </div>
             <h3 class="text-lg font-bold text-slate-900">Op. Dr. Kerem Vural</h3>
@@ -257,7 +257,7 @@
           </button>
         </div>
 
-        <!-- Ortopedi 1: Prof. Dr. Burak Şahin -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-4">
@@ -279,14 +279,14 @@
           </button>
         </div>
 
-        <!-- Ortopedi 2: Doç. Dr. Ozan Yıldız -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-4">
-              <img src="https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Doç. Dr. Ozan Yıldız" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <img src="https://images.pexels.com/photos/4989135/pexels-photo-4989135.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Doç. Dr. Mehmet Yıldız" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
               <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Spor Cerrahisi</span>
             </div>
-            <h3 class="text-lg font-bold text-slate-900">Doç. Dr. Ozan Yıldız</h3>
+            <h3 class="text-lg font-bold text-slate-900">Doç. Dr. Mehmet Yıldız</h3>
             <p class="text-xs font-semibold text-blue-600 mt-0.5">Ortopedi & Travmatoloji</p>
             <p class="text-xs text-slate-600 mt-3 leading-relaxed">
               Ön çapraz bağ cerrahisi, omuz yırtıkları, sporcu travmaları ve menisküs tamirinde minimal invaziv cerrahi yaklaşım.
@@ -296,12 +296,12 @@
               <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 09:00 - 16:00</span>
             </div>
           </div>
-          <button onclick="bookWithDoctor('Ortopedi & Travmatoloji - Doç. Dr. Ozan Yıldız')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+          <button onclick="bookWithDoctor('Ortopedi & Travmatoloji - Doç. Dr. Mehmet Yıldız')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
             Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
           </button>
         </div>
 
-        <!-- Beslenme 1: Dyt. Merve Aydın -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-4">
@@ -323,7 +323,7 @@
           </button>
         </div>
 
-        <!-- Beslenme 2: Dyt. Sinem Güler -->
+        
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
           <div>
             <div class="flex items-center justify-between mb-4">
@@ -348,7 +348,7 @@
       </div>
     </section>
 
-    <!-- 2. SEKME: RANDEVU AL (Giriş yapıldıktan sonra açılır) -->
+    
     <section id="page-booking" class="hidden max-w-xl mx-auto">
       <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-8 shadow-xl">
         <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
@@ -383,7 +383,7 @@
               </optgroup>
               <optgroup label="Ortopedi & Travmatoloji">
                 <option value="Ortopedi & Travmatoloji - Prof. Dr. Burak Şahin">Ortopedi & Travmatoloji - Prof. Dr. Burak Şahin</option>
-                <option value="Ortopedi & Travmatoloji - Doç. Dr. Ozan Yıldız">Ortopedi & Travmatoloji - Doç. Dr. Ozan Yıldız</option>
+                <option value="Ortopedi & Travmatoloji - Doç. Dr. Mehmet Yıldız">Ortopedi & Travmatoloji - Doç. Dr. Mehmet Yıldız</option>
               </optgroup>
               <optgroup label="Beslenme ve Diyetetik">
                 <option value="Beslenme ve Diyet - Dyt. Merve Aydın">Beslenme ve Diyet - Dyt. Merve Aydın</option>
@@ -401,7 +401,6 @@
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Randevu Saati</label>
               <select id="appointmentTime" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition">
-                <!-- updateAvailableSlots() fonksiyonu doldurur -->
               </select>
             </div>
           </div>
@@ -413,7 +412,7 @@
       </div>
     </section>
 
-    <!-- 3. SEKME: RANDEVULARIM -->
+    
     <section id="page-my-appointments" class="hidden max-w-4xl mx-auto space-y-6">
       <div class="flex justify-between items-center bg-white/95 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 shadow-sm">
         <div>
@@ -435,7 +434,7 @@
 
   </main>
 
-  <!-- GİRİŞ / HASTA KAYDI MODAL PENCERESİ -->
+  
   <div id="authModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-2xl border border-slate-200 shadow-2xl p-8 relative">
       
@@ -475,14 +474,12 @@
     let currentTab = 'login';
     let token = localStorage.getItem('medartemis_token');
 
-    // Poliklinik saat dilimleri
     const BASE_SLOTS = [
       "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
       "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"
     ];
 
     window.onload = () => {
-      // Yerel saate göre bugünün tarihini al
       const now = new Date();
       const year = now.getFullYear();
       const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -525,7 +522,6 @@
       }
     }
 
-    // DOLU SAATLERİ FİLTRELEME VE SEÇİLEMEZ YAPMA
     async function updateAvailableSlots() {
       const timeSelect = document.getElementById('appointmentTime');
       const doctorTitle = document.getElementById('resTitle').value;
@@ -539,7 +535,6 @@
         if (res.ok) {
           const allSlots = await res.json();
 
-          // Seçilen doktor ve yerel gün ile eşleşen saatleri bul
           busyTimes = allSlots
             .filter(slot => {
               if (slot.title !== doctorTitle) return false;
@@ -563,7 +558,6 @@
         console.warn('Dolu saatler okunamadı:', err);
       }
 
-      // Slotları yazdır: Dolu olanı kırmızı yap ve kitle
       timeSelect.innerHTML = BASE_SLOTS.map(slot => {
         const isBusy = busyTimes.includes(slot);
         if (isBusy) {
@@ -572,7 +566,6 @@
         return `<option value="${slot}">${slot}</option>`;
       }).join('');
 
-      // Seçili değer doluysa ilk boş saati seç
       if (busyTimes.includes(timeSelect.value)) {
         const firstAvailable = BASE_SLOTS.find(s => !busyTimes.includes(s));
         if (firstAvailable) timeSelect.value = firstAvailable;
