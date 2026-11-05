@@ -1,13 +1,36 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateReservationDto, UpdateReservationDto } from './reservation.dto';
 
 @Injectable()
-export class ReservationsService {
+export class ReservationsService { 
   constructor(private prisma: PrismaService) {}
 
+  
+  async getBusySlots() {
+    return this.prisma.reservation.findMany({
+      select: {
+        title: true,
+        startDate: true,
+      },
+    });
+  }
+
+  
   async create(userId: string, dto: CreateReservationDto) {
     const { title, startDate, endDate, serviceIds = [] } = dto;
+
+    
+    const existing = await this.prisma.reservation.findFirst({
+      where: {
+        title,
+        startDate: new Date(startDate),
+      },
+    });
+
+    if (existing) {
+      throw new BadRequestException('Bu hekim ve saat için randevu daha önce başka bir hasta tarafından alınmıştır!');
+    }
 
     return this.prisma.reservation.create({
       data: {

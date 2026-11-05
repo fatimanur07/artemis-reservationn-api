@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedArtemis - Doktor Randevu ve Sağlık Portalı</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .hospital-bg {
+      background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.92), rgba(241, 245, 249, 0.95)),
+                        url('https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=2000&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body class="hospital-bg text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <!-- Üst Menü / Header -->
+  <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/90 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      
+      <!-- Logo -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('doctors')">
+        <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-600/30">
+          <i class="fa-solid fa-hospital"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-extrabold tracking-tight text-blue-950">MEDARTEMIS</h1>
+          <p class="text-[11px] text-blue-600 font-bold tracking-wider uppercase">Tıp Merkezi & Randevu Portalı</p>
+        </div>
+      </div>
+
+      <!-- Navigasyon Sekmeleri (Giriş yapılınca görünür) -->
+      <nav id="mainNav" class="hidden md:flex items-center space-x-1 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200">
+        <button onclick="navigateTo('doctors')" id="nav-doctors" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition text-white bg-blue-600 shadow-sm">
+          <i class="fa-solid fa-user-doctor mr-1.5"></i> Hekim Kadromuz
+        </button>
+        <button onclick="navigateTo('booking')" id="nav-booking" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition text-slate-600 hover:text-blue-600">
+          <i class="fa-solid fa-calendar-check mr-1.5"></i> Randevu Al
+        </button>
+        <button onclick="navigateTo('my-appointments')" id="nav-my-appointments" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition text-slate-600 hover:text-blue-600">
+          <i class="fa-solid fa-notes-medical mr-1.5"></i> Randevularım
+        </button>
+      </nav>
+
+      <!-- Kullanıcı & Çıkış Durumu -->
+      <div id="authStatus" class="flex items-center space-x-3">
+        <span id="userBadge" class="hidden text-xs font-semibold bg-blue-50 text-blue-700 px-3.5 py-2 rounded-full border border-blue-200"></span>
+        <button id="logoutBtn" onclick="logout()" class="hidden text-xs font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-4 py-2 rounded-xl transition">
+          <i class="fa-solid fa-right-from-bracket mr-1"></i> Çıkış Yap
+        </button>
+        <button id="loginModalBtn" onclick="openAuthModal()" class="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-xl shadow-md shadow-blue-600/20 transition flex items-center gap-2">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Giriş Yap / Kaydol
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Bildirim Kutusu -->
+  <div class="max-w-xl mx-auto px-6 mt-4 w-full">
+    <div id="globalAlert" class="hidden p-3.5 rounded-xl text-sm font-medium text-center shadow-sm"></div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full">
+
+    <!-- 1. SEKME: TÜM DOKTORLAR (Açılış Ekranı) -->
+    <section id="page-doctors" class="space-y-8">
+      <div class="text-center max-w-2xl mx-auto">
+        <span class="text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-100/70 px-3.5 py-1.5 rounded-full border border-blue-200">Akademik & Klinik Kadro</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 mt-3">Uzman Hekimlerimizle Tanışın</h2>
+        <p class="text-slate-600 text-sm mt-2">Sağlığınız için alanında yetkin 12 uzman doktorumuzla tanı ve tedavi hizmeti sunuyoruz.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Kardiyoloji 1: Doç. Dr. Fatımanur Cengiz -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-blue-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between relative overflow-hidden group">
+          <div class="absolute top-0 left-0 w-full h-1.5 bg-blue-600"></div>
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.pexels.com/photos/5214995/pexels-photo-5214995.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Doç. Dr. Fatımanur Cengiz" class="w-20 h-20 rounded-2xl object-cover border-2 border-blue-500 shadow-md">
+              <span class="text-[10px] font-bold text-blue-700 bg-blue-100 px-3 py-1 rounded-full uppercase tracking-wider">Bölüm Başkanı</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Doç. Dr. Fatımanur Cengiz</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Kardiyoloji & Kalp Sağlığı</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              İleri ekokardiyografi, girişimsel kardiyoloji, ritim bozuklukları ve koroner arter cerrahisi takip protokollerinde uzman.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 1 (Kat 2)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 09:00 - 16:30</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Kardiyoloji - Doç. Dr. Fatımanur Cengiz')" class="mt-6 w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-md shadow-blue-600/20 transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Kardiyoloji 2: Uzm. Dr. Caner Erkin -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Uzm. Dr. Caner Erkin" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Uzman Kardiyolog</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Uzm. Dr. Caner Erkin</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Kardiyoloji & Kalp Sağlığı</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Kalp kapak hastalıkları, hipertansiyon yönetimi ve kalp damar tıkanıklığı erken teşhisinde 10 yıllık klinik deneyim.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 1 (Kat 2)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 09:30 - 17:00</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Kardiyoloji - Uzm. Dr. Caner Erkin')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Dahiliye 1: Uzm. Dr. Polat Yılmaz -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Uzm. Dr. Polat Yılmaz" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Kıdemli Uzman</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Uzm. Dr. Polat Yılmaz</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Dahiliye (İç Hastalıkları)</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Diyabet regülasyonu, tiroit bozuklukları, insülin direnci ve metabolik sendrom tanısında kişiye özel tedavi yaklaşımları.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 2 (Kat 1)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 09:00 - 17:00</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Dahiliye - Uzm. Dr. Polat Yılmaz')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Dahiliye 2: Uzm. Dr. Selin Korkmaz -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.pexels.com/photos/4173239/pexels-photo-4173239.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Uzm. Dr. Selin Korkmaz" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Uzman Hekim</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Uzm. Dr. Selin Korkmaz</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Dahiliye (İç Hastalıkları)</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Mide-bağırsak hastalıkları, kansızlık (anemi), karaciğer yağlanması ve check-up sağlığı takibinde tecrübeli iç hastalıkları uzmanı.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 2 (Kat 1)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 10:00 - 16:30</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Dahiliye - Uzm. Dr. Selin Korkmaz')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Dermatoloji 1: Uzm. Dr. Emre Demir -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=400&q=80" alt="Uzm. Dr. Emre Demir" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Uzman Hekim</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Uzm. Dr. Emre Demir</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Dermatoloji (Cildiye)</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Dermatoskopi ile dijital ben haritalama, alerjik deri reaksiyonları, sedef ve egzama tedavisinde güncel yöntemler.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 3 (Kat 1)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 09:30 - 16:30</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Dermatoloji (Cildiye) - Uzm. Dr. Emre Demir')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Dermatoloji 2: Uzm. Dr. Leyla Taş -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.pexels.com/photos/4173251/pexels-photo-4173251.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Uzm. Dr. Leyla Taş" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Kozmetik & Klinik</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Uzm. Dr. Leyla Taş</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Dermatoloji (Cildiye)</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Akne ve leke tedavisi, saç dökülmesi mezoterapileri ve modern lazer cilt gençleştirme uygulamalarında deneyimli.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 3 (Kat 1)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 09:00 - 16:00</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Dermatoloji (Cildiye) - Uzm. Dr. Leyla Taş')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Göz 1: Op. Dr. Zeynep Çelik -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80" alt="Op. Dr. Zeynep Çelik" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Operatör Hekim</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Op. Dr. Zeynep Çelik</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Göz Hastalıkları & Cerrahisi</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Fakoemülsifikasyon ile katarakt ameliyatı, akıllı lens uygulamaları ve kırma kusurlarının excimer lazer cerrahisi.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 4 (Kat 2)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 09:00 - 16:00</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Göz Hastalıkları - Op. Dr. Zeynep Çelik')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Göz 2: Op. Dr. Kerem Vural -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.pexels.com/photos/8376277/pexels-photo-8376277.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Op. Dr. Kerem Vural" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Retina & Glokom</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Op. Dr. Kerem Vural</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Göz Hastalıkları & Cerrahisi</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Glokom (göz tansiyonu) cerrahisi, diyabetik retina hastalıkları ve şaşılık tedavisinde 14 yıllık cerrahi tecrübe.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 4 (Kat 2)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 10:00 - 16:30</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Göz Hastalıkları - Op. Dr. Kerem Vural')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Ortopedi 1: Prof. Dr. Burak Şahin -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80" alt="Prof. Dr. Burak Şahin" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Kıdemli Profesör</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Prof. Dr. Burak Şahin</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Ortopedi & Travmatoloji</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Robotik diz ve kalça protezi ameliyatları, omurga cerrahisi ve ileri düzey artroskopik eklem rekonstrüksiyonları.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 5 (Kat 3)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 10:00 - 16:30</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Ortopedi & Travmatoloji - Prof. Dr. Burak Şahin')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Ortopedi 2: Doç. Dr. Ozan Yıldız -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Doç. Dr. Ozan Yıldız" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Spor Cerrahisi</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Doç. Dr. Ozan Yıldız</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Ortopedi & Travmatoloji</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Ön çapraz bağ cerrahisi, omuz yırtıkları, sporcu travmaları ve menisküs tamirinde minimal invaziv cerrahi yaklaşım.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 5 (Kat 3)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 09:00 - 16:00</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Ortopedi & Travmatoloji - Doç. Dr. Ozan Yıldız')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Beslenme 1: Dyt. Merve Aydın -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Dyt. Merve Aydın" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Klinik Diyetisyen</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Dyt. Merve Aydın</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Beslenme ve Diyetetik</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Kişiye özel kilo kontrolü, insülin direnci beslenme tedavisi, gebelik dönemi beslenmesi ve gastrointestinal diyet protokolleri.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 6 (Kat 1)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 09:00 - 16:00</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Beslenme ve Diyet - Dyt. Merve Aydın')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <!-- Beslenme 2: Dyt. Sinem Güler -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition flex flex-col justify-between group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Dyt. Sinem Güler" class="w-20 h-20 rounded-2xl object-cover border-2 border-slate-200 group-hover:border-blue-500 shadow-md transition">
+              <span class="text-[10px] font-semibold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Sporcu Diyetisyeni</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Dyt. Sinem Güler</h3>
+            <p class="text-xs font-semibold text-blue-600 mt-0.5">Beslenme ve Diyetetik</p>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Profesyonel sporcu beslenmesi, ketojenik ve aralıklı oruç planlaması ile sürdürülebilir sağlıklı yaşam danışmanlığı.
+            </p>
+            <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span><i class="fa-solid fa-hospital-user text-blue-500 mr-1"></i> Poliklinik 6 (Kat 1)</span>
+              <span><i class="fa-regular fa-clock text-blue-500 mr-1"></i> 09:30 - 17:00</span>
+            </div>
+          </div>
+          <button onclick="bookWithDoctor('Beslenme ve Diyet - Dyt. Sinem Güler')" class="mt-6 w-full py-2.5 bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2">
+            Randevu Oluştur <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. SEKME: RANDEVU AL (Giriş yapıldıktan sonra açılır) -->
+    <section id="page-booking" class="hidden max-w-xl mx-auto">
+      <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-8 shadow-xl">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shadow-sm">
+            <i class="fa-solid fa-calendar-plus"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Randevu Talebi Oluştur</h2>
+            <p class="text-xs text-slate-500">Dolu randevu saatleri sistem tarafından kilitlenir.</p>
+          </div>
+        </div>
+
+        <form id="bookingForm" onsubmit="handleReservation(event)" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Poliklinik & Hekim Seçimi</label>
+            <select id="resTitle" onchange="updateAvailableSlots()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition">
+              <optgroup label="Kardiyoloji">
+                <option value="Kardiyoloji - Doç. Dr. Fatımanur Cengiz">Kardiyoloji - Doç. Dr. Fatımanur Cengiz</option>
+                <option value="Kardiyoloji - Uzm. Dr. Caner Erkin">Kardiyoloji - Uzm. Dr. Caner Erkin</option>
+              </optgroup>
+              <optgroup label="Dahiliye (İç Hastalıkları)">
+                <option value="Dahiliye - Uzm. Dr. Polat Yılmaz">Dahiliye - Uzm. Dr. Polat Yılmaz</option>
+                <option value="Dahiliye - Uzm. Dr. Selin Korkmaz">Dahiliye - Uzm. Dr. Selin Korkmaz</option>
+              </optgroup>
+              <optgroup label="Dermatoloji (Cildiye)">
+                <option value="Dermatoloji (Cildiye) - Uzm. Dr. Emre Demir">Dermatoloji (Cildiye) - Uzm. Dr. Emre Demir</option>
+                <option value="Dermatoloji (Cildiye) - Uzm. Dr. Leyla Taş">Dermatoloji (Cildiye) - Uzm. Dr. Leyla Taş</option>
+              </optgroup>
+              <optgroup label="Göz Hastalıkları">
+                <option value="Göz Hastalıkları - Op. Dr. Zeynep Çelik">Göz Hastalıkları - Op. Dr. Zeynep Çelik</option>
+                <option value="Göz Hastalıkları - Op. Dr. Kerem Vural">Göz Hastalıkları - Op. Dr. Kerem Vural</option>
+              </optgroup>
+              <optgroup label="Ortopedi & Travmatoloji">
+                <option value="Ortopedi & Travmatoloji - Prof. Dr. Burak Şahin">Ortopedi & Travmatoloji - Prof. Dr. Burak Şahin</option>
+                <option value="Ortopedi & Travmatoloji - Doç. Dr. Ozan Yıldız">Ortopedi & Travmatoloji - Doç. Dr. Ozan Yıldız</option>
+              </optgroup>
+              <optgroup label="Beslenme ve Diyetetik">
+                <option value="Beslenme ve Diyet - Dyt. Merve Aydın">Beslenme ve Diyet - Dyt. Merve Aydın</option>
+                <option value="Beslenme ve Diyet - Dyt. Sinem Güler">Beslenme ve Diyet - Dyt. Sinem Güler</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Randevu Günü</label>
+              <input type="date" id="appointmentDate" onchange="updateAvailableSlots()" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Randevu Saati</label>
+              <select id="appointmentTime" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none transition">
+                <!-- updateAvailableSlots() fonksiyonu doldurur -->
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md shadow-blue-600/20 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-check"></i> Randevuyu Onayla ve Kaydet
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 3. SEKME: RANDEVULARIM -->
+    <section id="page-my-appointments" class="hidden max-w-4xl mx-auto space-y-6">
+      <div class="flex justify-between items-center bg-white/95 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Aktif Muayene Randevularım</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Sistemdeki onaylanmış randevularınızı buradan inceleyebilirsiniz.</p>
+        </div>
+        <button onclick="fetchReservations()" class="text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-4 py-2 rounded-xl transition flex items-center gap-1.5">
+          <i class="fa-solid fa-arrows-rotate"></i> Listeyi Yenile
+        </button>
+      </div>
+
+      <div id="reservationsList" class="space-y-4">
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-12 text-center text-slate-400">
+          <i class="fa-solid fa-calendar-xmark text-4xl mb-3 text-slate-300"></i>
+          <p>Henüz planlanmış bir randevunuz bulunmamaktadır.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- GİRİŞ / HASTA KAYDI MODAL PENCERESİ -->
+  <div id="authModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl border border-slate-200 shadow-2xl p-8 relative">
+      
+      <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex border-b border-slate-100 mb-6">
+        <button onclick="switchTab('login')" id="tabLogin" class="flex-1 pb-3 text-center font-bold text-sm text-blue-600 border-b-2 border-blue-600">Hasta Girişi</button>
+        <button onclick="switchTab('register')" id="tabRegister" class="flex-1 pb-3 text-center font-bold text-sm text-slate-400 border-b-2 border-transparent">Yeni Hasta Kaydı</button>
+      </div>
+
+      <div id="modalAlert" class="hidden mb-4 p-3 rounded-xl text-xs font-semibold"></div>
+
+      <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
+        <div id="nameField" class="hidden">
+          <label class="block text-xs font-bold text-slate-500 mb-1">AD SOYAD</label>
+          <input type="text" id="nameInput" placeholder="Örn: Fatıma Nur" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:bg-white focus:border-blue-600 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-1">E-POSTA ADRESİ</label>
+          <input type="email" id="emailInput" required placeholder="hasta@ornek.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:bg-white focus:border-blue-600 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-1">ŞİFRE</label>
+          <input type="password" id="passwordInput" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:bg-white focus:border-blue-600 focus:outline-none">
+        </div>
+        <button type="submit" id="authSubmitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-md shadow-blue-600/20 transition mt-2">
+          Giriş Yap
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000';
+    let currentTab = 'login';
+    let token = localStorage.getItem('medartemis_token');
+
+    // Poliklinik saat dilimleri
+    const BASE_SLOTS = [
+      "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+      "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"
+    ];
+
+    window.onload = () => {
+      // Yerel saate göre bugünün tarihini al
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const todayStr = `${year}-${month}-${day}`;
+
+      const dateInput = document.getElementById('appointmentDate');
+      if (dateInput) {
+        dateInput.min = todayStr;
+        if (!dateInput.value || dateInput.value < todayStr) {
+          dateInput.value = todayStr;
+        }
+      }
+
+      checkSession();
+      updateAvailableSlots();
+    };
+
+    function navigateTo(pageId) {
+      const pages = ['doctors', 'booking', 'my-appointments'];
+      pages.forEach(p => {
+        const pageEl = document.getElementById(`page-${p}`);
+        const navEl = document.getElementById(`nav-${p}`);
+        
+        if (p === pageId) {
+          pageEl.classList.remove('hidden');
+          if (navEl) navEl.className = 'px-5 py-2.5 rounded-xl text-sm font-semibold transition text-white bg-blue-600 shadow-sm';
+        } else {
+          pageEl.classList.add('hidden');
+          if (navEl) navEl.className = 'px-5 py-2.5 rounded-xl text-sm font-semibold transition text-slate-600 hover:text-blue-600';
+        }
+      });
+
+      if (pageId === 'booking') {
+        updateAvailableSlots();
+      }
+
+      if (pageId === 'my-appointments' && token) {
+        fetchReservations();
+      }
+    }
+
+    // DOLU SAATLERİ FİLTRELEME VE SEÇİLEMEZ YAPMA
+    async function updateAvailableSlots() {
+      const timeSelect = document.getElementById('appointmentTime');
+      const doctorTitle = document.getElementById('resTitle').value;
+      const dateVal = document.getElementById('appointmentDate').value;
+      if (!timeSelect || !doctorTitle || !dateVal) return;
+
+      let busyTimes = [];
+
+      try {
+        const res = await fetch(`${API_URL}/reservations/busy-slots`);
+        if (res.ok) {
+          const allSlots = await res.json();
+
+          // Seçilen doktor ve yerel gün ile eşleşen saatleri bul
+          busyTimes = allSlots
+            .filter(slot => {
+              if (slot.title !== doctorTitle) return false;
+              
+              const d = new Date(slot.startDate);
+              const year = d.getFullYear();
+              const month = String(d.getMonth() + 1).padStart(2, '0');
+              const day = String(d.getDate()).padStart(2, '0');
+              const localDateStr = `${year}-${month}-${day}`;
+              
+              return localDateStr === dateVal;
+            })
+            .map(slot => {
+              const d = new Date(slot.startDate);
+              const hours = String(d.getHours()).padStart(2, '0');
+              const minutes = String(d.getMinutes()).padStart(2, '0');
+              return `${hours}:${minutes}`;
+            });
+        }
+      } catch (err) {
+        console.warn('Dolu saatler okunamadı:', err);
+      }
+
+      // Slotları yazdır: Dolu olanı kırmızı yap ve kitle
+      timeSelect.innerHTML = BASE_SLOTS.map(slot => {
+        const isBusy = busyTimes.includes(slot);
+        if (isBusy) {
+          return `<option value="${slot}" disabled style="color: #ef4444; background-color: #fee2e2; font-weight: bold;">${slot} (Dolu)</option>`;
+        }
+        return `<option value="${slot}">${slot}</option>`;
+      }).join('');
+
+      // Seçili değer doluysa ilk boş saati seç
+      if (busyTimes.includes(timeSelect.value)) {
+        const firstAvailable = BASE_SLOTS.find(s => !busyTimes.includes(s));
+        if (firstAvailable) timeSelect.value = firstAvailable;
+      }
+    }
+
+    function bookWithDoctor(doctorName) {
+      const select = document.getElementById('resTitle');
+      if (select) select.value = doctorName;
+
+      if (!token) {
+        openAuthModal();
+        showAlert('Randevu oluşturmak için lütfen hasta girişi yapınız.', 'error');
+        return;
+      }
+
+      navigateTo('booking');
+      updateAvailableSlots();
+    }
+
+    function openAuthModal() {
+      document.getElementById('authModal').classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      const nameField = document.getElementById('nameField');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const tabLogin = document.getElementById('tabLogin');
+      const tabRegister = document.getElementById('tabRegister');
+      const alertBox = document.getElementById('modalAlert');
+      alertBox.classList.add('hidden');
+
+      if (tab === 'login') {
+        nameField.classList.add('hidden');
+        submitBtn.innerText = 'Giriş Yap';
+        tabLogin.className = 'flex-1 pb-3 text-center font-bold text-sm text-blue-600 border-b-2 border-blue-600';
+        tabRegister.className = 'flex-1 pb-3 text-center font-bold text-sm text-slate-400 border-b-2 border-transparent';
+      } else {
+        nameField.classList.remove('hidden');
+        submitBtn.innerText = 'Yeni Hasta Kaydı';
+        tabRegister.className = 'flex-1 pb-3 text-center font-bold text-sm text-blue-600 border-b-2 border-blue-600';
+        tabLogin.className = 'flex-1 pb-3 text-center font-bold text-sm text-slate-400 border-b-2 border-transparent';
+      }
+    }
+
+    async function handleAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value;
+      const password = document.getElementById('passwordInput').value;
+      const name = document.getElementById('nameInput').value;
+      const endpoint = currentTab === 'login' ? '/auth/login' : '/auth/register';
+      const bodyData = currentTab === 'login' ? { email, password } : { email, password, name };
+
+      try {
+        const res = await fetch(`${API_URL}${endpoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'İşlem başarısız');
+
+        if (currentTab === 'register') {
+          showAlert('Kayıt başarılı! Lütfen giriş yapınız.', 'success');
+          switchTab('login');
+        } else {
+          token = data.accessToken;
+          localStorage.setItem('medartemis_token', token);
+          localStorage.setItem('medartemis_email', email);
+          closeAuthModal();
+          checkSession();
+          showAlert(`Hoş geldiniz, ${email}`, 'success');
+          navigateTo('booking');
+        }
+      } catch (err) {
+        showModalAlert(err.message, 'error');
+      }
+    }
+
+    function checkSession() {
+      const email = localStorage.getItem('medartemis_email');
+      const mainNav = document.getElementById('mainNav');
+
+      if (token && email) {
+        if (mainNav) mainNav.classList.remove('hidden');
+        document.getElementById('userBadge').innerText = email;
+        document.getElementById('userBadge').classList.remove('hidden');
+        document.getElementById('logoutBtn').classList.remove('hidden');
+        document.getElementById('loginModalBtn').classList.add('hidden');
+      } else {
+        if (mainNav) mainNav.classList.add('hidden');
+        document.getElementById('userBadge').classList.add('hidden');
+        document.getElementById('logoutBtn').classList.add('hidden');
+        document.getElementById('loginModalBtn').classList.remove('hidden');
+        navigateTo('doctors');
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      token = null;
+      checkSession();
+      showAlert('Oturum kapatıldı.', 'success');
+      navigateTo('doctors');
+    }
+
+    async function fetchReservations() {
+      if (!token) return;
+
+      try {
+        const res = await fetch(`${API_URL}/reservations`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Randevular alınamadı');
+        const list = await res.json();
+        
+        const container = document.getElementById('reservationsList');
+        if (!list || list.length === 0) {
+          container.innerHTML = `
+            <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-slate-200 p-12 text-center text-slate-400">
+              <i class="fa-solid fa-calendar-xmark text-4xl mb-3 text-slate-300"></i>
+              <p>Henüz planlanmış bir muayene randevunuz bulunmamaktadır.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = list.map(item => {
+          const dateObj = new Date(item.startDate);
+          const dateStr = dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' });
+          const timeStr = dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+          return `
+            <div class="bg-white/95 backdrop-blur-sm p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4 hover:border-blue-300 transition">
+              <div>
+                <div class="font-bold text-slate-900 text-base flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span> ${item.title}
+                </div>
+                <div class="text-xs text-slate-500 mt-2 flex flex-wrap gap-4">
+                  <span class="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg">
+                    <i class="fa-regular fa-calendar text-blue-600 mr-1.5"></i> <strong>Tarih:</strong> ${dateStr}
+                  </span>
+                  <span class="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg">
+                    <i class="fa-regular fa-clock text-blue-600 mr-1.5"></i> <strong>Saat:</strong> ${timeStr}
+                  </span>
+                </div>
+              </div>
+              <button onclick="deleteReservation('${item.id}')" class="text-xs font-semibold bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2 rounded-xl transition flex items-center justify-center gap-1.5">
+                <i class="fa-regular fa-trash-can"></i> İptal Et
+              </button>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function handleReservation(e) {
+      e.preventDefault();
+      if (!token) {
+        openAuthModal();
+        showAlert('Randevu almak için lütfen giriş yapınız.', 'error');
+        return;
+      }
+
+      const title = document.getElementById('resTitle').value;
+      const dateVal = document.getElementById('appointmentDate').value;
+      const timeVal = document.getElementById('appointmentTime').value;
+
+      if (!dateVal || !timeVal) {
+        showAlert('Lütfen tarih ve saat seçiniz.', 'error');
+        return;
+      }
+
+      const startDateTime = new Date(`${dateVal}T${timeVal}:00`);
+      const endDateTime = new Date(startDateTime.getTime() + 30 * 60000);
+
+      if (startDateTime < new Date()) {
+        showAlert('Geçmiş bir tarih veya saate randevu oluşturamazsınız.', 'error');
+        return;
+      }
+
+      const startDate = startDateTime.toISOString();
+      const endDate = endDateTime.toISOString();
+
+      try {
+        const res = await fetch(`${API_URL}/reservations`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ title, startDate, endDate })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            localStorage.clear();
+            token = null;
+            checkSession();
+            openAuthModal();
+            throw new Error('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.');
+          }
+          const errorMsg = Array.isArray(data.message) ? data.message.join(', ') : (data.message || 'Randevu oluşturulamadı');
+          throw new Error(errorMsg);
+        }
+        
+        showAlert('Randevunuz başarıyla oluşturuldu!', 'success');
+        updateAvailableSlots();
+        navigateTo('my-appointments');
+      } catch (err) {
+        showAlert(err.message, 'error');
+      }
+    }
+
+    async function deleteReservation(id) {
+      if (!confirm('Bu muayene randevusunu iptal etmek istediğinize emin misiniz?')) return;
+      try {
+        const res = await fetch(`${API_URL}/reservations/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('İptal işlemi başarısız');
+        showAlert('Randevu iptal edildi.', 'success');
+        fetchReservations();
+        updateAvailableSlots();
+      } catch (err) {
+        showAlert(err.message, 'error');
+      }
+    }
+
+    function showAlert(msg, type) {
+      const box = document.getElementById('globalAlert');
+      box.innerText = msg;
+      box.className = `p-3.5 rounded-xl text-sm font-medium text-center shadow-sm ${type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`;
+      box.classList.remove('hidden');
+      setTimeout(() => box.classList.add('hidden'), 4000);
+    }
+
+    function showModalAlert(msg, type) {
+      const box = document.getElementById('modalAlert');
+      box.innerText = msg;
+      box.className = `p-3 rounded-xl text-xs font-semibold ${type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`;
+      box.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
