@@ -1,66 +1,118 @@
-# 🏨 Artemis Luxury Resort - Reservation API
+# 🏛️ Artemis Reservation API
 
-Artemis Luxury Resort otel yönetim ve rezervasyon sistemi için geliştirilmiş, yüksek performanslı ve modüler RESTful backend servisidir. Güvenli kimlik doğrulama, rezervasyon yönetimi ve ilişkisel veri tabanı modellemesini içerir.
+Modern, ölçeklenebilir ve rol tabanlı erişim kontrolü (RBAC) sunan kurumsal seviyede bir rezervasyon ve randevu yönetim REST API'si.
 
----
-
-## 🚀 Teknolojiler ve Araçlar
-
-- **Backend Framework:** NestJS (Node.js & TypeScript)
-- **Veritabanı & ORM:** Prisma ORM & SQLite
-- **Kimlik Doğrulama:** JWT (JSON Web Token), Passport & Bcrypt
-- **API Dokümantasyonu:** Swagger / OpenAPI
-- **Doğrulama & Güvenlik:** Class-Validator, Class-Transformer
+Proje, SQLite altyapısından kurumsal bulut veritabanı **Supabase PostgreSQL** mimarisine taşınmış; çift tokenlı (Access & Refresh Token) JWT kimlik doğrulama, çoka-çok ilişkisel veri modelleri ve Swagger dokümantasyonu ile güçlendirilmiştir.
 
 ---
 
-## ✨ Temel Özellikler
+## 🚀 Öne Çıkan Özellikler
 
-- **Kullanıcı & Oturum Yönetimi (Auth):**
-  - Güvenli kullanıcı kaydı (Register) ve şifreli veri saklama.
-  - JWT tabanlı oturum açma (Login) ve Bearer Token yetkilendirmesi.
-  - Role/kullanıcı bazlı korumalı endpoint'ler (JwtAuthGuard).
-
-- **Rezervasyon Yönetimi (Reservations):**
-  - Müsaitlik durumuna göre oda rezervasyonu oluşturma.
-  - Rezervasyon detaylarını listeleme, sorgulama ve filtreleme.
-  - Rezervasyon güncelleme ve iptal/silme süreçleri.
-
-- **Veritabanı & Migration:**
-  - Prisma şeması (schema.prisma) ile tip güvenli (type-safe) veritabanı ilişkileri.
-  - Sürüm kontrollü migration mimarisi.
+- **Gelişmiş Kimlik Doğrulama (Auth & Security):** 
+  - JWT tabanlı Access Token ve veritabanında güvenle hash'lenen (bcrypt) Refresh Token mekanizması.
+  - Oturum süresi dolduğunda kesintisiz oturum yenileme (`/auth/refresh`).
+- **Rol Tabanlı Erişim Kontrolü (RBAC):** `USER` ve `ADMIN` rolleri ile korunan uç noktalar.
+- **İlişkisel Veritabanı Mimarisi:**
+  - `User`, `Reservation` ve `Service` modelleri.
+  - Randevu ve hizmetler arasında dinamik **Çoka-Çok (Many-to-Many)** ilişki yapısı.
+  - Otomatik üretilen `UUID` benzersiz kimlikleri.
+- **Veritabanı Yönetimi & Migration:** Prisma ORM ve Supabase PostgreSQL (Transaction & Session Pooler) entegrasyonu.
+- **Etkileşimli API Dokümantasyonu:** OpenAPI / Swagger UI desteği.
+- **Güvenli Konfigürasyon:** Hassas bağlantı dizeleri ve gizli anahtarların `.env` üzerinden yönetimi.
 
 ---
 
-## 🛠️ Kurulum ve Çalıştırma
+## 🛠️ Teknoloji Yığını
 
-Projeyi yerel ortamınızda ayağa kaldırmak için aşağıdaki adımları izleyin:
+- **Backend Framework:** NestJS (Node.js)
+- **Dil:** TypeScript
+- **ORM:** Prisma ORM
+- **Veritabanı:** Supabase (Cloud PostgreSQL)
+- **Kimlik Doğrulama:** Passport.js, JWT (`@nestjs/jwt`), Bcrypt
+- **Dokümantasyon:** Swagger UI (`@nestjs/swagger`)
+- **Test:** Jest
 
-### 1. Bağımlılıkları Yükleyin
+---
+
+## 📂 Veritabanı Şeması (ERD)
+
+```text
+[ User ] 1 ──── ∞ [ Reservation ] ∞ ──── ∞ [ Service ]
+  ├── id (UUID)          ├── id (UUID)             ├── id (UUID)
+  ├── email              ├── title                 ├── name
+  ├── password           ├── startDate             └── price
+  ├── role (USER/ADMIN)  ├── endDate
+  └── refreshTokenHash   └── userId (FK)
+```
+
+---
+
+## ⚙️ Kurulum ve Çalıştırma
+
+### 1. Depoyu Klonlayın
+```bash
+git clone [https://github.com/fatimanur07/artemis-reservationn-api.git](https://github.com/fatimanur07/artemis-reservationn-api.git)
+cd artemis-reservationn-api
+```
+
+### 2. Bağımlılıkları Yükleyin
+```bash
 npm install
+```
 
-### 2. Ortam Değişkenlerini Ayarlayın
-.env.example dosyasını referans alarak ana dizinde bir .env dosyası oluşturun:
-DATABASE_URL="file:./dev.db"
-JWT_SECRET="super-secret-jwt-key"
+### 3. Ortam Değişkenlerini Tanımlayın
+Kök dizinde bir `.env` dosyası oluşturun ve gerekli değerleri girin:
+```env
+DATABASE_URL="postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION][.pooler.supabase.com:6543/postgres?pgbouncer=true](https://.pooler.supabase.com:6543/postgres?pgbouncer=true)"
+DIRECT_URL="postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION][.pooler.supabase.com:6543/postgres](https://.pooler.supabase.com:6543/postgres)"
+
+JWT_SECRET="your_jwt_secret_key"
+JWT_REFRESH_SECRET="your_jwt_refresh_secret_key"
 PORT=3000
+```
 
-### 3. Veritabanını Hazırlayın (Prisma Migration)
-npx prisma migrate dev
+### 4. Prisma İstemcisini ve Şemayı Senkronize Edin
+```bash
+npx prisma generate
+npx prisma db push
+```
 
-### 4. Uygulamayı Başlatın
+### 5. Uygulamayı Başlatın
+```bash
+# Geliştirme modu
 npm run start:dev
 
+# Prodüksiyon derlemesi
+npm run build
+npm run start:prod
+```
+
 ---
 
-## 📚 API Dokümantasyonu (Swagger)
+## 📖 API Dokümantasyonu (Swagger)
 
-Uygulama çalıştıktan sonra interaktif Swagger arayüzü üzerinden tüm endpoint'leri test edebilirsiniz:
-http://localhost:3000/api
+Uygulama çalıştıktan sonra tarayıcınızdan interaktif API dokümantasyonuna erişebilirsiniz:
+
+👉 **`http://localhost:3000/api`**
+
+### Başlıca Uç Noktalar
+
+| Metot | Uç Nokta | Açıklama | Yetki |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/auth/register` | Yeni kullanıcı kaydı | Herkese Açık |
+| `POST` | `/auth/login` | Giriş yapma (Access & Refresh token döner) | Herkese Açık |
+| `POST` | `/auth/refresh` | Access token yenileme | Refresh Token |
+| `GET` | `/reservations` | Kullanıcının rezervasyonlarını listeleme | JWT Auth |
+| `POST` | `/reservations` | Yeni randevu / rezervasyon oluşturma | JWT Auth |
+| `GET` | `/reservations/:id`| Belirli bir rezervasyonun detayını getirme | JWT Auth |
+| `PATCH`| `/reservations/:id`| Rezervasyon bilgilerini güncelleme | JWT Auth |
+| `DELETE`| `/reservations/:id`| Rezervasyonu iptal etme / silme | JWT Auth |
 
 ---
 
 ## 🧪 Testler
 
+```bash
+# Birim testleri çalıştırma
 npm run test
-npm run test:e2e
+```
